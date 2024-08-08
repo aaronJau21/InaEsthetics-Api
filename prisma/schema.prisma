@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RolesUsuarios {
+  ADMINISTRADOR
+  USUARIOS
+  MARKETING
+}
+
+enum RoleTrabajadores {
+  DIRECTORA_MEDICA
+  DIRECTOR_MEDICO
+  MEDICO_CIRUJANO
+  DERMATOLOGO
+  ASISTENTE_MEDICO
+  ADMISIONISTA
+}
+
+enum TipoDocumento {
+  DNI
+  CARNET_ESTRANJERIA
+}
+
+enum TipoTratamiento {
+  FACIALES
+  CORPORALES
+  MEDICINA_ESTETICA
+  DERMATOLOGIA_ESTETICA
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  user         String         @unique
+  password     String
+  role         RolesUsuarios  @default(USUARIOS)
+  Trabajadores Trabajadores[]
+  status       Boolean        @default(true)
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  Distritos    Distritos[]
+  Clientes     Clientes[]
+  Tratamientos Tratamientos[]
+  Productos    Productos[]
+}
+
+model Trabajadores {
+  id                 Int                  @id @default(autoincrement())
+  nombreCompleto     String               @unique
+  role               RoleTrabajadores     @default(ADMISIONISTA)
+  descripcion        String               @db.Text
+  usersId            Int
+  user               User                 @relation(fields: [usersId], references: [id])
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @updatedAt
+  TrabajadoresImages TrabajadoresImages[]
+}
+
+model Distritos {
+  id         Int      @id @default(autoincrement())
+  nombre     String   @unique
+  status     Boolean  @default(true)
+  usersId    Int
+  user       User     @relation(fields: [usersId], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Clientes {
+  id                 Int           @id @default(autoincrement())
+  nombre             String
+  apellidos          String
+  numero_contacto    String
+  correo_electronico String
+  tipo_documento     TipoDocumento @default(DNI)
+  numero_cocumento   String        @unique
+  distrito           String
+  direccion          String
+  referencia         String?
+  usersId            Int
+  user               User          @relation(fields: [usersId], references: [id])
+  frecuencia         Int           @default(0)
+  created_at         DateTime      @default(now())
+  updated_at         DateTime      @updatedAt
+}
+
+model Tratamientos {
+  id                 Int                  @id @default(autoincrement())
+  nombre             String               @unique
+  descripcion        String               @db.Text
+  imagen             String[]             @db.Text
+  precio             Float                @default(00.00)
+  TratamientosImages TratamientosImages[]
+  especialidad       TipoTratamiento
+  estado             Boolean              @default(true)
+  usersId            Int
+  user               User                 @relation(fields: [usersId], references: [id])
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @updatedAt
+}
+
+model Productos {
+  id          Int              @id @default(autoincrement())
+  nombre      String           @unique
+  descripcion String           @db.Text
+  precio      Float            @default(00.00)
+  estado      Boolean          @default(true)
+  images      ProductsImages[]
+  usersId     Int
+  user        User             @relation(fields: [usersId], references: [id])
+  created_at  DateTime         @default(now())
+  updated_at  DateTime         @updatedAt
+}
+
+model ProductsImages {
+  id         Int       @id @default(autoincrement())
+  images     String?
+  product_id Int
+  products   Productos @relation(fields: [product_id], references: [id])
+}
+
+model TratamientosImages {
+  id             Int          @id @default(autoincrement())
+  images         String?
+  tratamiento_id Int
+  tratamientos   Tratamientos @relation(fields: [tratamiento_id], references: [id])
+}
+
+model TrabajadoresImages {
+  id            Int          @id @default(autoincrement())
+  images        String?
+  trabajador_id Int
+  trabajadores  Trabajadores @relation(fields: [trabajador_id], references: [id])
+}
