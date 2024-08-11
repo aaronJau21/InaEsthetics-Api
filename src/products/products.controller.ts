@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UploadedFile } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/products/create-product.dto';
 import { UpdateProductDto } from './dto/products/update-product.dto';
@@ -22,18 +22,27 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @UseGuards( AuthGuard )
   @Get( ':id' )
   findOne( @Param( 'id' ) id: string ) {
     return this.productsService.findOne( +id );
   }
 
+  @UseGuards( AuthGuard )
   @Patch( ':id' )
-  update( @Param( 'id' ) id: string, @Body() updateProductDto: UpdateProductDto ) {
-    return this.productsService.update( +id, updateProductDto );
+  update( @Param( 'id' ) id: string, @Body() updateProductDto: UpdateProductDto, @Req() req: any ) {
+    return this.productsService.update( +id, updateProductDto, req );
   }
 
-  @Delete( ':id' )
-  remove( @Param( 'id' ) id: string ) {
-    return this.productsService.remove( +id );
+  @UseGuards( AuthGuard )
+  @Get( 'desactive/:id' )
+  desactiveProduct( @Param( 'id' ) id: string, @Req() req: any ) {
+    return this.productsService.desactiveProduct( +id, req );
+  }
+
+  @UseGuards( AuthGuard )
+  @Get( 'active/:id' )
+  activeProduct( @Param( 'id' ) id: string, @Req() req: any ) {
+    return this.productsService.activeProduct( +id, req );
   }
 }

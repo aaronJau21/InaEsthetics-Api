@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/products/create-product.dto';
 import { UpdateProductDto } from './dto/products/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'supertest';
-import { ProductImages } from './dto/images/create-productsImages.dto';
+import { Productos } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
@@ -12,7 +12,7 @@ export class ProductsService {
     private readonly prisma: PrismaService
   ) { }
 
-  async create( createProductDto: CreateProductDto, req: Request ) {
+  async create( createProductDto: CreateProductDto, req: Request ): Promise<Productos> {
 
     const payload = req[ 'user' ];
 
@@ -32,19 +32,10 @@ export class ProductsService {
       }
     } );
 
-    if ( createProductDto.images && createProductDto.images.trim() !== "" ) {
-      await this.prisma.productsImages.create( {
-        data: {
-          images: createProductDto.images,
-          product_id: newProduct.id,
-        },
-      } );
-    }
-
     return newProduct;
   }
 
-  async findAll() {
+  async findAll(): Promise<Productos[]> {
     const products = await this.prisma.productos.findMany( {
       include: {
         images: true
@@ -53,15 +44,54 @@ export class ProductsService {
     return products;
   }
 
-  findOne( id: number ) {
-    return `This action returns a #${ id } product`;
+  async findOne( id: number ): Promise<Productos> {
+    const produt = await this.prisma.productos.findFirst( { where: { id }, include: { images: true } } );
+
+    if ( !produt ) throw new NotFoundException( 'No existe el Producto' );
+
+    return produt;
   }
 
-  update( id: number, updateProductDto: UpdateProductDto ) {
-    return `This action updates a #${ id } product`;
+  async update( id: number, updateProductDto: UpdateProductDto, req: Request ) {
+    await this.findOne( id );
+    const payload = req[ 'user' ];
+    const producto = await this.prisma.productos.update( {
+      where: { id }, data: {
+        nombre: updateProductDto.nombre,
+        descripcion: updateProductDto.descripcion,
+        precio: updateProductDto.precio,
+        usersId: payload.id
+      }
+    } );
+
+    return producto;
   }
 
-  remove( id: number ) {
-    return `This action removes a #${ id } product`;
+  async desactiveProduct( id: number, req: Request ) {
+    await this.findOne( id );
+    const payload = req[ 'user' ];
+    const product = await this.prisma.productos.update( {
+      where: { id },
+      data: {
+        estado: false,
+        usersId: payload.id
+      }
+    } );
+
+    return product;
+  }
+
+  async activeProduct( id: number, req: Request ) {
+    await this.findOne( id );
+    const payload = req[ 'user' ];
+    const product = await this.prisma.productos.update( {
+      where: { id },
+      data: {
+        estado: true,
+        usersId: payload.id
+      }
+    } );
+
+    return product;
   }
 }

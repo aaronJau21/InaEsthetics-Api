@@ -121,19 +121,19 @@ model ProductsImages {
   id         Int       @id @default(autoincrement())
   images     String?
   product_id Int
-  products   Productos @relation(fields: [product_id], references: [id])
+  products   Productos @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model TratamientosImages {
   id             Int          @id @default(autoincrement())
   images         String?
   tratamiento_id Int
-  tratamientos   Tratamientos @relation(fields: [tratamiento_id], references: [id])
+  tratamientos   Tratamientos @relation(fields: [tratamiento_id], references: [id], onDelete: Cascade)
 }
 
 model TrabajadoresImages {
   id            Int          @id @default(autoincrement())
   images        String?
   trabajador_id Int
-  trabajadores  Trabajadores @relation(fields: [trabajador_id], references: [id])
+  trabajadores  Trabajadores @relation(fields: [trabajador_id], references: [id], onDelete: Cascade)
 }

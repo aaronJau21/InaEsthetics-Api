@@ -11,8 +11,4 @@ export class CreateProductDto {
   @IsNumber()
   precio: number;
 
-  @IsOptional()
-  @IsString()
-  images?: string;
-
 }
