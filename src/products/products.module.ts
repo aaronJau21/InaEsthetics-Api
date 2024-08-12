@@ -10,10 +10,7 @@ import { MulterModule } from '@nestjs/platform-express';
   providers: [ ProductsService ],
   imports: [
     PrismaModule,
-    AuthModule,
-    MulterModule.register( {
-      dest: './uploads',
-    } )
+    AuthModule
   ]
 } )
 export class ProductsModule { }

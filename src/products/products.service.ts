@@ -4,7 +4,6 @@ import { UpdateProductDto } from './dto/products/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'supertest';
 import { Productos } from '@prisma/client';
-
 @Injectable()
 export class ProductsService {
 
@@ -94,4 +93,5 @@ export class ProductsService {
 
     return product;
   }
+
 }

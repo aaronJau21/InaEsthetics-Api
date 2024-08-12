@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/products/create-product.dto';
 import { UpdateProductDto } from './dto/products/update-product.dto';
 import { AuthGuard } from 'src/auth/auth/guards/auth.guard';
-import { Request } from 'express';
-import { ProductImages } from './dto/images/create-productsImages.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller( 'products' )
 export class ProductsController {
