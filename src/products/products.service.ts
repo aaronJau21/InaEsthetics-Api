@@ -37,14 +37,14 @@ export class ProductsService {
   async findAll(): Promise<Productos[]> {
     const products = await this.prisma.productos.findMany( {
       include: {
-        images: true
+        productImage: true
       }
     } );
     return products;
   }
 
   async findOne( id: number ): Promise<Productos> {
-    const produt = await this.prisma.productos.findFirst( { where: { id }, include: { images: true } } );
+    const produt = await this.prisma.productos.findFirst( { where: { id }, include: { productImage: true } } );
 
     if ( !produt ) throw new NotFoundException( 'No existe el Producto' );
 

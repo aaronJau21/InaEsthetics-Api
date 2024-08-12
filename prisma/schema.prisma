@@ -93,7 +93,6 @@ model Tratamientos {
   id                 Int                  @id @default(autoincrement())
   nombre             String               @unique
   descripcion        String               @db.Text
-  imagen             String[]             @db.Text
   precio             Float                @default(00.00)
   TratamientosImages TratamientosImages[]
   especialidad       TipoTratamiento
@@ -105,35 +104,35 @@ model Tratamientos {
 }
 
 model Productos {
-  id          Int              @id @default(autoincrement())
-  nombre      String           @unique
-  descripcion String           @db.Text
-  precio      Float            @default(00.00)
-  estado      Boolean          @default(true)
-  images      ProductsImages[]
-  usersId     Int
-  user        User             @relation(fields: [usersId], references: [id])
-  created_at  DateTime         @default(now())
-  updated_at  DateTime         @updatedAt
+  id           Int              @id @default(autoincrement())
+  nombre       String           @unique
+  descripcion  String           @db.Text
+  precio       Float            @default(00.00)
+  estado       Boolean          @default(true)
+  productImage ProductsImages[]
+  usersId      Int
+  user         User             @relation(fields: [usersId], references: [id])
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
 }
 
 model ProductsImages {
   id         Int       @id @default(autoincrement())
-  images     String?
+  url        String?   @db.Text
   product_id Int
   products   Productos @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model TratamientosImages {
   id             Int          @id @default(autoincrement())
-  images         String?
+  url            String?      @db.Text
   tratamiento_id Int
   tratamientos   Tratamientos @relation(fields: [tratamiento_id], references: [id], onDelete: Cascade)
 }
 
 model TrabajadoresImages {
   id            Int          @id @default(autoincrement())
-  images        String?
+  url           String?      @db.Text
   trabajador_id Int
   trabajadores  Trabajadores @relation(fields: [trabajador_id], references: [id], onDelete: Cascade)
 }
